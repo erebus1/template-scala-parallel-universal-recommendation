@@ -41,7 +41,7 @@ package object conversions {
 
       // may want to mapPartition and create bulk updates as a slight optimization
       // creates an RDD of (itemID, Map[correlatorName, list-of-correlator-values])
-      indexedDataset.matrix.rdd.map[(String, Map[String, Seq[String]])] { case (rowNum, itemVector) =>
+      indexedDataset.matrix.rdd.repartition(12).map[(String, Map[String, Seq[String]])] { case (rowNum, itemVector) =>
 
         // turn non-zeros into list for sorting
         var itemList = List[(Int, Double)]()
