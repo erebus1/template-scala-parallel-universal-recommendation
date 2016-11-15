@@ -6,7 +6,7 @@
   "datasource": {
     "params" : {
       "name": "sample-handmade-data.txt",
-      "appName": "handmade",
+      "appName": "URTest",
       "eventNames": ["purchase", "view"]
     }
   },
@@ -15,6 +15,8 @@
     "spark.kryo.registrator": "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator",
     "spark.kryo.referenceTracking": "false",
     "spark.kryoserializer.buffer": "300m",
+    "spark.eventLog.enabled": "true",
+    "spark.eventLog.dir": "/home/igor/disk/log/",
     "spark.executor.memory": "4g",
     "es.index.auto.create": "true"
   },
@@ -24,7 +26,7 @@
       "name": "ur",
       "params": {
         "appName": "handmade",
-        "indexName": "urindex",
+        "indexName": "URTest",
         "typeName": "items",
         "comment": "must have data for the first event or the model will not build, other events are optional",
         "eventNames": ["purchase", "view"]
