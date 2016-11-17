@@ -395,7 +395,12 @@ class URAlgorithm(val ap: URAlgorithmParams)
       val must: List[JValue] = mustFields
 
       val mustNotFields: JValue = render(("ids" -> ("values" -> getExcludedItems (alluserEvents._2, query)) ~ ("boost" -> 0)))
-      val mustNot: JValue = mustNotFields
+
+      val reboost_fields_filters = query.reboost_fields.getOrElse(List.empty[Field]).map { field =>
+        FilterCorrelators(field.name, field.values)
+      }
+      val mustNot: JValue = render(reboost_fields_filters.map { i =>
+        render(("terms" -> (i.actionName -> i.itemIDs) ~ ("boost" -> 0)))}.toList :+ mustNotFields)
 
       val popQuery = if (ap.recsModel.getOrElse("all") == "all" ||
         ap.recsModel.getOrElse("all") == "backfill") {
