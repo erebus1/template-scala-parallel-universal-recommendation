@@ -361,8 +361,6 @@ class URAlgorithm(val ap: URAlgorithmParams)
 
       val filteringMetadata = getFilteringMetadata(query)
 
-      val filteringDateRange = getFilteringDateRange(query)
-
       val allFilteringCorrelators = recentUserHistoryFilter ++ similarItemsFilter ++ filteringMetadata
 
       // since users have action history and items have correlators and both correspond to the same "actions" like
@@ -394,7 +392,7 @@ class URAlgorithm(val ap: URAlgorithmParams)
 
       val mustFields: List[JValue] = allFilteringCorrelators.map { i =>
         render(("terms" -> (i.actionName -> i.itemIDs) ~ ("boost" -> 0)))}.toList
-      val must: List[JValue] = mustFields ::: filteringDateRange
+      val must: List[JValue] = mustFields
 
       val mustNotFields: JValue = render(("ids" -> ("values" -> getExcludedItems (alluserEvents._2, query)) ~ ("boost" -> 0)))
       val mustNot: JValue = mustNotFields
