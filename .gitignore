@@ -5,6 +5,7 @@
 .cache/
 .history/
 .lib/
+log/
 dist/*
 target/
 lib_managed/
