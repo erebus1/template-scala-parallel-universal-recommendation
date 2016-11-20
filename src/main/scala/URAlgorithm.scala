@@ -24,6 +24,7 @@ import io.prediction.data
 import io.prediction.data.storage.{PropertyMap, Event}
 import io.prediction.data.store.LEventStore
 import org.apache.mahout.math.cf.SimilarityAnalysis
+import org.apache.mahout.math.cf.ParOpts
 import org.apache.mahout.sparkbindings.indexeddataset.IndexedDatasetSpark
 import org.apache.spark.rdd.RDD
 import org.joda.time.DateTime
@@ -145,7 +146,7 @@ class URAlgorithm(val ap: URAlgorithmParams)
       randomSeed = ap.seed.getOrElse(System.currentTimeMillis()).toInt,
       maxInterestingItemsPerThing = ap.maxCorrelatorsPerEventType
         .getOrElse(defaultURAlgorithmParams.DefaultMaxCorrelatorsPerEventType),
-      maxNumInteractions = ap.maxEventsPerEventType.getOrElse(defaultURAlgorithmParams.DefaultMaxEventsPerEventType))
+      maxNumInteractions = ap.maxEventsPerEventType.getOrElse(defaultURAlgorithmParams.DefaultMaxEventsPerEventType), ParOpts(12, 12, false))
       .map(_.asInstanceOf[IndexedDatasetSpark]) // strip action names
     val cooccurrenceCorrelators = cooccurrenceIDSs.zip(data.actions.map(_._1)).map(_.swap) //add back the actionNames
 

@@ -4,7 +4,7 @@ version := "0.2.3"
 
 organization := "io.prediction"
 
-val mahoutVersion = "0.11.1"
+val mahoutVersion = "0.13.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   "io.prediction"    %% "core" % pioVersion.value % "provided",
