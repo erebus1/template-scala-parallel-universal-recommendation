@@ -146,7 +146,7 @@ class URAlgorithm(val ap: URAlgorithmParams)
       randomSeed = ap.seed.getOrElse(System.currentTimeMillis()).toInt,
       maxInterestingItemsPerThing = ap.maxCorrelatorsPerEventType
         .getOrElse(defaultURAlgorithmParams.DefaultMaxCorrelatorsPerEventType),
-      maxNumInteractions = ap.maxEventsPerEventType.getOrElse(defaultURAlgorithmParams.DefaultMaxEventsPerEventType), ParOpts(12, 12, false))
+      maxNumInteractions = ap.maxEventsPerEventType.getOrElse(defaultURAlgorithmParams.DefaultMaxEventsPerEventType), ParOpts(48, 48, false))
       .map(_.asInstanceOf[IndexedDatasetSpark]) // strip action names
     val cooccurrenceCorrelators = cooccurrenceIDSs.zip(data.actions.map(_._1)).map(_.swap) //add back the actionNames
 
