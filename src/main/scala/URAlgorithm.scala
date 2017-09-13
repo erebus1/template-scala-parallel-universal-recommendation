@@ -101,7 +101,7 @@ case class URAlgorithmParams(
   * @param ap taken from engine.json to describe limits and event types
   */
 class URAlgorithm(val ap: URAlgorithmParams)
-  extends P2LAlgorithm[PreparedData, URModel, Query, PredictedResult] {
+  extends P2LAlgorithm[PreparedData, URModel, Query, PredictedQueryResult] {
 
   case class BoostableCorrelators(actionName: String, itemIDs: Seq[String], boost: Option[Float])
   case class FilterCorrelators(actionName: String, itemIDs: Seq[String])
@@ -310,18 +310,19 @@ class URAlgorithm(val ap: URAlgorithmParams)
     * @todo Need to prune that query to minimum required for data include, for instance no need for the popularity
     *       ranking if no PopModel is being used, same for "must" clause and dates.
     */
-  def predict(model: URModel, query: Query): PredictedResult = {
+  def predict(model: URModel, query: Query): PredictedQueryResult = {
     logger.info(s"Query received, user id: ${query.user}, item id: ${query.item}")
 
     queryEventNames = query.eventNames.getOrElse(ap.eventNames) // eventNames in query take precedence for the query
     // part of their use
     val backfillFieldName = ap.backfillField.getOrElse(BackfillField()).name
     val queryAndBlacklist = buildQuery(ap, query, backfillFieldName)
-    val recs = esClient.search(queryAndBlacklist._1, ap.indexName)
-    // should have all blacklisted items excluded
+    new PredictedQueryResult(queryAndBlacklist._1)
+//    val recs = esClient.search(queryAndBlacklist._1, ap.indexName)
+//     should have all blacklisted items excluded
     // todo: need to add dithering, mean, sigma, seed required, make a seed that only changes on some fixed time
-    // period so the recs ordering stays fixed for that time period.
-    recs
+//     period so the recs ordering stays fixed for that time period.
+//    recs
   }
 
   /** Build a query from default algorithms params and the query itself taking into account defaults */

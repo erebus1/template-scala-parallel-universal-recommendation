@@ -65,6 +65,10 @@ case class PredictedResult(
     itemScores: Array[ItemScore])
   extends Serializable
 
+case class PredictedQueryResult(
+    query: String)
+  extends Serializable
+
 case class ItemScore(
     item: String, // item id
     score: Double )// used to rank, original score returned from teh search engine

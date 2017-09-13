@@ -20,11 +20,11 @@ package org.template
 import io.prediction.controller.LServing
 
 class Serving
-  extends LServing[Query, PredictedResult] {
+  extends LServing[Query, PredictedQueryResult] {
 
   override
   def serve(query: Query,
-    predictedResults: Seq[PredictedResult]): PredictedResult = {
+    predictedResults: Seq[PredictedQueryResult]): PredictedQueryResult = {
     predictedResults.head
   }
 }
