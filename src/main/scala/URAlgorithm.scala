@@ -372,19 +372,18 @@ class URAlgorithm(val ap: URAlgorithmParams)
 
       val shouldFields: Option[List[JValue]] = if (allBoostedCorrelators.isEmpty) None
       else {
-        Some(allBoostedCorrelators.map { i =>
-          render(("terms" -> (i.actionName -> i.itemIDs) ~ ("boost" -> i.boost)))
-        }.toList)
+        Some(allBoostedCorrelators.map { i => i.itemIDs.map {
+          id_ => render(("filter" -> ("term" -> (i.actionName -> id_))) ~ ("weight" -> i.boost.getOrElse(1f)))
+        }.toList
+        }.toList.flatten)
       }
       val popModelSort = List(parse(
         """
           |{
-          |  "constant_score": {
-          |    "filter": {
-          |      "match_all": {}
-          |    },
-          |    "boost": 0
-          |  }
+          | "filter": {
+          |   "match_all": {}
+          |  },
+          |     "weight": 0
           |}
           |""".stripMargin))
 
@@ -421,14 +420,19 @@ class URAlgorithm(val ap: URAlgorithmParams)
       val json =
         (
           ("size" -> numRecs) ~
-          ("query"->
-            ("bool"->
-              ("should"-> should) ~
-              ("must"-> must) ~
-              ("must_not"-> mustNot) ~
-              ("minimum_should_match" -> 1))
-          ) ~
-          ("sort" -> popQuery))
+            ("query"->
+              ("function_score" ->
+                ("functions" -> should) ~
+                ("score_mode" -> "sum") ~
+                ("boost_mode" -> "replace") ~
+                ("query" -> ("bool"->
+                  (
+                    ("must"-> must) ~
+                    ("must_not"-> mustNot)
+                  )
+                  ))
+                ))~
+            ("sort" -> popQuery))
       val j = compact(render(json))
       logger.info(s"Query: \n${j}\n")
       (compact(render(json)), alluserEvents._2)
