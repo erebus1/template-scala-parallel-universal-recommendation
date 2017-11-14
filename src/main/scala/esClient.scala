@@ -116,6 +116,12 @@ object esClient {
         |    },
         """.stripMargin.replace("\n", "")
       }
+      val longField =
+        """
+          |: {
+          |      "type": "long"
+          |    },
+        """.stripMargin.replace("\n", "")
 
       val mappingsTail = """
         |    "id": {
@@ -132,6 +138,8 @@ object esClient {
       fieldNames.foreach { fieldName =>
         if (typeMappings.nonEmpty && typeMappings.get.contains(fieldName))
           mappings += (fieldName + mappingsField(typeMappings.get(fieldName)))
+        else if (fieldName.slice(fieldName.length()-4, fieldName.length()) == "_int")
+          mappings += fieldName + longField
         else // unspecified fields are treated as not_analyzed strings
           mappings += (fieldName + mappingsField("string"))
       }

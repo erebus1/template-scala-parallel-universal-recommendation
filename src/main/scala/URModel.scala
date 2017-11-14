@@ -125,7 +125,8 @@ class URModel(
 
     // these need to be indexed with "not_analyzed" and no norms so have to
     // collect all field names before ES index create
-    val allFields = (allActions ++ allPropKeys).distinct // shouldn't need distinct but it's fast
+    val allFields = (allActions ++ allPropKeys ++ allActions.map(i => i+"_int")).distinct // shouldn't need distinct but it's fast
+    val actions_map = allActions.map(i => i -> (i+"_int"))//.toMap
 
     if (propertiesRDD.isEmpty) {
       // Elasticsearch takes a Map with all fields, not a tuple
@@ -139,7 +140,7 @@ class URModel(
       if (esRDDs.nonEmpty) {
         val esFields = groupAll(esRDDs).map { case (item, map) =>
           // todo: every map's items must be checked for value type and converted before writing to ES
-          val esMap = map + ("id" -> item)
+          val esMap = map + ("id" -> item) ++ actions_map.map(k => k._2 -> map.getOrElse(k._1, None)).toMap
           esMap
         }
         // create a new index then hot-swap the new index by re-aliasing to it then delete old index
