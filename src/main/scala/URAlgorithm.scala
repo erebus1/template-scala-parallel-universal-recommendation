@@ -370,10 +370,11 @@ class URAlgorithm(val ap: URAlgorithmParams)
 
       val numRecs = query.num.getOrElse(ap.num.getOrElse(defaultURAlgorithmParams.DefaultNum))
 
+      val correlators_map = Map("contact" -> "contact_int", "view" -> "view_int")
       val shouldFields: Option[List[JValue]] = if (allBoostedCorrelators.isEmpty) None
       else {
         Some(allBoostedCorrelators.map { i =>
-          render(("terms" -> (i.actionName -> i.itemIDs) ~ ("boost" -> i.boost)))
+          render(("terms" -> (correlators_map.getOrElse(i.actionName, i.actionName) -> i.itemIDs) ~ ("boost" -> i.boost)))
         }.toList)
       }
       val popModelSort = List(parse(
